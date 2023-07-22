@@ -1,0 +1,61 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    overflow: scroll;
+}
+
+.profile{
+    display: flex;
+    flex-direction: column;
+}
+
+.imagem{
+    flex: 20%;
+    margin-left: 5%;
+    margin-top: 5%;
+    display: flex;
+    align-items: baseline
+}
+.imagem img{
+    border-radius: 50%;
+    width: 20%;
+    min-width: 130px;
+    max-width: 300px
+}
+.imagem span{
+    background-color: lightgray;
+    border-radius: 50%;
+}
+.data{
+    flex: 80%;
+    width: 70%;
+    margin:auto;
+    margin-top: 5%;
+    max-width: 800px;
+}
+
+.i{
+    width: 100%;
+    margin: 1% 0;
+    padding: 3%;
+
+}
+.learning, .native{
+    margin: 3% 0;
+}
+.select{
+    margin: 2%;
+    text-align: center;  
+}
+
+.words{
+    flex: 5;
+    text-align: center; 
+    font-size: 20px;
+    color: grey;
+    font-weight: bold;
+}
