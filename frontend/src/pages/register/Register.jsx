@@ -8,6 +8,23 @@ import {Link} from 'react-router-dom'
 import './register.css'
 
 export default function Register(){
+
+  const [inputs, setInputs] = useState({
+    email: "",
+    username: "",
+    password: "",
+    name: "",
+    mainLanguage: "",
+    learningLanguage: "" 
+  })
+  useEffect(()=>{
+    console.log(inputs)
+  }, [inputs])
+
+  function handleChange(e){
+    setInputs(prev=>({...prev, [e.target.name]: e.target.value}))
+  }
+  
   const options = [
     { value: "english", label: "English", image: English },
     { value: "portuguese", label: "Portuguese", image: Portugal },
@@ -15,10 +32,11 @@ export default function Register(){
     { value: "french", label: "French", image: France }
   ];
 
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("english");
 
   const handleSelectChange = (selectedOption) => {
     setSelectedOption(selectedOption);
+    setInputs(prev=>({...prev, mainLanguage: selectedOption.target.value}))
   };
 
   const options2 = [
@@ -28,10 +46,11 @@ export default function Register(){
     { value: "french", label: "French", image: France }
   ];
 
-  const [selectedOption2, setSelectedOption2] = useState(null);
+  const [selectedOption2, setSelectedOption2] = useState("english");
 
   const handleSelectChange2 = (selectedOption) => {
     setSelectedOption2(selectedOption);
+    setInputs(prev=>({...prev, learningLanguage: selectedOption.target.value}))
   };
   
 
@@ -67,19 +86,19 @@ export default function Register(){
 
             <div className="name">
               <label>Name:</label>
-              <input type="text"/>
+              <input name="name" type="text" onChange={handleChange} value={inputs.name}/>
             </div>  
             <div className="email">
               <label>Email:</label>
-              <input type="email"/>
+              <input name="email" type="email" onChange={handleChange} value={inputs.email}/>
             </div> 
             <div className="user">
               <label>Username:</label>
-              <input type="text"/>
+              <input name="usermane" type="text" onChange={handleChange} value={inputs.username}/>
             </div>
             <div className="pass">
               <label>Password:</label>
-              <input type="password"/>
+              <input name="password" type="password" onChange={handleChange} value={inputs.password}/>
             </div>   
               <div className="button">
               <div id="sign">
@@ -96,6 +115,9 @@ export default function Register(){
             </>
         )
     }
+
+
+    
     const Layout2 = ()=>{
         return(
             <> 
@@ -107,36 +129,32 @@ export default function Register(){
             </div>
               <div className="mae">
                 <label>Your native language:</label>
-              <Select
-              className="select"
-            options={options}
-            value={selectedOption}
-            onChange={handleSelectChange}
-            getOptionLabel={(option) => (
-              <>
-                <img src={option.image} alt={option.label} />
-              </>
-            )}
-            getOptionValue={(option) => option.value}
-            placeholder="Choose your native language"
-          />
+                <Select 
+    options={options}
+    getOptionLabel={(option) => option.label}
+    getOptionValue={(option) => option.value} 
+    formatOptionLabel={({value, label, image}) => (
+      <div>
+        <img src={image} alt={label} /> 
+      </div>
+       )}
+       />
               </div>
-
-
               <div className="aprende">
               <label>You are learning:</label>
-              <Select
-              className="select"
+              <Select 
+              className="s"
             options={options2}
             value={selectedOption2}
             onChange={handleSelectChange2}
+            name="learningLanguage"
             getOptionLabel={(option) => (
               <>
                 <img src={option.image} alt={option.label} />
               </>
             )}
             getOptionValue={(option) => option.value}
-            placeholder="Choose your native language"
+            placeholder="Choose your learning language"
           /> 
               </div>
             <div className="next2" onClick={()=>setLayout(true)}>
