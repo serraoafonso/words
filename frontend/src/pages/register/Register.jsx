@@ -4,34 +4,15 @@ import English from '../../assets/united-kingdom.png'
 import France from '../../assets/france.png'
 import German from '../../assets/germany.png'
 import Select from "react-select";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import './register.css'
 
 export default function Register(){
-
-  const [inputs, setInputs] = useState({
-    email: "",
-    username: "",
-    password: "",
-    name: "",
-    mainLanguage: "",
-    learningLanguage: "" 
-  })
-  useEffect(()=>{
-    console.log(inputs)
-  }, [inputs])
-
-  function handleChange(e){
-    setInputs(prev=>({...prev, [e.target.name]: e.target.value}))
-  }
   
-  const options = [
-    { value: "english", label: "English", image: English },
-    { value: "portuguese", label: "Portuguese", image: Portugal },
-    { value: "german", label: "German", image: German },
-    { value: "french", label: "French", image: France }
-  ];
+  const navigate = useNavigate()
 
+
+  /*
   const [selectedOption, setSelectedOption] = useState("english");
 
   const handleSelectChange = (selectedOption) => {
@@ -39,12 +20,7 @@ export default function Register(){
     setInputs(prev=>({...prev, mainLanguage: selectedOption.target.value}))
   };
 
-  const options2 = [
-    { value: "english", label: "English", image: English },
-    { value: "portuguese", label: "Portuguese", image: Portugal },
-    { value: "german", label: "German", image: German },
-    { value: "french", label: "French", image: France }
-  ];
+
 
   const [selectedOption2, setSelectedOption2] = useState("english");
 
@@ -52,18 +28,59 @@ export default function Register(){
     setSelectedOption2(selectedOption);
     setInputs(prev=>({...prev, learningLanguage: selectedOption.target.value}))
   };
+
+  <Select 
+    options={options}
+    getOptionLabel={(option) => option.label}
+    getOptionValue={(option) => option.value} 
+    formatOptionLabel={({value, label, image}) => (
+      <div>
+        <img src={image} alt={label} /> 
+      </div>
+       )}
+       />*/
   
 
     const [layout, setLayout] = useState(true)
+    const [passou, setPassou] = useState(true)
 
-    function handleCallbackResponse(response){
-      console.log("Encoded JWT ID token: "+response.credential)
-      var userObject = jwt_decode(response.credential)
-      console.log(userObject)
-     } 
-  
+    function changeLayout(inputs){
+
+      const data = {
+        email: inputs.email,
+        username: inputs.username,
+        password: inputs.password,
+        name: inputs.name,
+      }
+    
+      if(data.email=="" || data.username=="" || data.password=="" || data.username==""){
+        setPassou(false)
+      }else{
+      localStorage.setItem('inputs', JSON.stringify(data))
+      setLayout(false)
+      }
+    }
+
+    const Layout1 = ()=>{
+
+      const [inputs, setInputs] = useState({
+        email: "",
+        username: "",
+        password: "",
+        name: "",
+      })
+    
+      
+      useEffect(()=>{
+        console.log(inputs)
+      }, [inputs])
+    
+      function handleChange(e){
+        setInputs(prev=>({...prev, [e.target.name]: e.target.value}))
+      }
       useEffect(()=>{
         /* global google */
+        
         google.accounts.id.initialize({
           client_id: "451868079952-0n9a0jnfiqioms8fm9sbhh9vcmus2djv.apps.googleusercontent.com",
           callback: handleCallbackResponse
@@ -76,7 +93,18 @@ export default function Register(){
         //preciso por o comentario acima
       }, [layout])
 
-    const Layout1 = ()=>{
+      function handleCallbackResponse(response){
+        console.log("Encoded JWT ID token: "+response.credential)
+        var userObject = jwt_decode(response.credential)
+        console.log(userObject)
+       } 
+       
+       const estilo = !passou ? {
+        visibility: "visible"
+       } : {
+        visibility: "hidden"
+       }
+   
         return(
             <> 
               <div className="header">
@@ -94,7 +122,7 @@ export default function Register(){
             </div> 
             <div className="user">
               <label>Username:</label>
-              <input name="usermane" type="text" onChange={handleChange} value={inputs.username}/>
+              <input name="username" type="text" onChange={handleChange} value={inputs.username}/>
             </div>
             <div className="pass">
               <label>Password:</label>
@@ -102,16 +130,19 @@ export default function Register(){
             </div>   
               <div className="button">
               <div id="sign">
-
               </div>
               <Link to ="/login">
               <button >Already have an account?</button>
               </Link>
-              <div className="next" onClick={()=>setLayout(false)}>
+              <div className="next" onClick={()=>changeLayout(inputs)}>
               &gt;
               </div>
               </div>
             </form>
+            <div className="aviso" style={estilo}>
+              <p>Please fill all the gaps</p>
+              <button onClick={()=>setPassou(true)}>Ok</button>
+              </div>
             </>
         )
     }
@@ -119,6 +150,55 @@ export default function Register(){
 
     
     const Layout2 = ()=>{
+
+          
+    const options2 = [
+      { value: "german", label: "German", image: German },
+      { value: "english", label: "English", image: English },
+      { value: "portuguese", label: "Portuguese", image: Portugal },
+      { value: "french", label: "French", image: France }
+    ];
+    const options = [
+      { value: "english", label: "English", image: English },
+      { value: "portuguese", label: "Portuguese", image: Portugal },
+      { value: "german", label: "German", image: German },
+      { value: "french", label: "French", image: France }
+    ];
+    const [selectedOption, setSelectedOption] = useState("english");
+
+    const handleSelectChange = (selectedOption) => {
+      setSelectedOption(selectedOption.target.value);
+    };
+  
+    const [selectedOption2, setSelectedOption2] = useState("german");
+  
+    const handleSelectChange2 = (selectedOption) => {
+      setSelectedOption2(selectedOption.target.value);
+    };
+     
+    const handleSubmit = async(e)=>{
+      e.preventDefault()
+      const inputs = JSON.parse(localStorage.getItem('inputs'))
+      const userData = {
+        ...inputs,
+        mainLanguage: selectedOption,
+        learningLanguage: selectedOption2
+      }
+      try{
+        await fetch('http://localhost:4000/api/user/register', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(userData)
+        })
+        alert('Login in successfull')
+        navigate('/')
+      }catch(err){
+        console.log(err)
+        alert('Um erro ocorreu: '+err)
+        setLayout(false)
+      }
+    }
+ 
         return(
             <> 
               <div className="header">
@@ -129,41 +209,38 @@ export default function Register(){
             </div>
               <div className="mae">
                 <label>Your native language:</label>
-                <Select 
-    options={options}
-    getOptionLabel={(option) => option.label}
-    getOptionValue={(option) => option.value} 
-    formatOptionLabel={({value, label, image}) => (
-      <div>
-        <img src={image} alt={label} /> 
-      </div>
-       )}
-       />
+                <select name="mainLanguage" id="" value={selectedOption} onChange={handleSelectChange}>
+                  {options.map((option)=>{
+                    return(
+                      <option key={option.value} value={option.value}>
+                        <img src={option.image} alt={option.value} />
+                        <label>{option.label}</label>
+                      </option>
+                    )
+                  })}
+                </select>
               </div>
               <div className="aprende">
               <label>You are learning:</label>
-              <Select 
-              className="s"
-            options={options2}
-            value={selectedOption2}
-            onChange={handleSelectChange2}
-            name="learningLanguage"
-            getOptionLabel={(option) => (
-              <>
-                <img src={option.image} alt={option.label} />
-              </>
-            )}
-            getOptionValue={(option) => option.value}
-            placeholder="Choose your learning language"
-          /> 
+              <select name="mainLanguage" id="" value={selectedOption2} onChange={handleSelectChange2}>
+                  {options2.map((option)=>{
+                    return(
+                      <option key={option.value}>
+                        <img src={option.image} alt={option.value} />
+                        <label>{option.label}</label>
+                      </option>
+                    )
+                  })}
+                </select>
               </div>
             <div className="next2" onClick={()=>setLayout(true)}>
             &lt;
               </div>
               <div className="btn">
-              <button>Register</button>
+              <button onClick={handleSubmit}>Register</button>
               </div>
             </form>
+
             </>
         )
     }

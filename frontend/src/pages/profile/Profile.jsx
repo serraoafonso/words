@@ -19,12 +19,12 @@ export default function Profile(){
     ];
     
   
-    const [selectedOption, setSelectedOption] = useState(options.find((option) => option.value === language));
+    const [selectedOption, setSelectedOption] = useState(language);
   
+ 
     const handleSelectChange = (selectedOption) => {
-      setSelectedOption(selectedOption);
-      change(selectedOption.value)
-      console.log(selectedOption.value)
+      setSelectedOption(selectedOption.target.value)
+      change(selectedOption.target.value)
     };
   
     const options2 = [
@@ -34,16 +34,19 @@ export default function Profile(){
         { value: "french", label: "French", image: France }
       ];
 
-      const [selectedOption2, setSelectedOption2] = useState(null);
+      const [selectedOption2, setSelectedOption2] = useState('english');
   
     const handleSelectChange2 = (selectedOption) => {
-      setSelectedOption2(selectedOption);
+      setSelectedOption2(selectedOption.target.value);
     };
+    useEffect(()=>{
+      setSelectedOption(language)
+    }, [language, selectedOption])
 
     const Layout1 = ()=>{
         return(
-            <>
-         <div className="imagem">
+            <div className="profile">
+         <div className="imag">
             <img src="https://lh3.googleusercontent.com/a/AAcHTte3Cx612zxY54ElrMSXajq4H9bpOIGnAnsif_DPsHbyHCM=s360-c-no" alt="" />
             <span class="material-symbols-outlined">
             edit
@@ -67,38 +70,33 @@ export default function Profile(){
             </div>
             <div className="learning">
                 <label>Learning:</label>
-            <Select
-            className="select"
-            options={options}
-            value={selectedOption}
-            onChange={handleSelectChange}
-            getOptionLabel={(option) => (
-              <>
-                <img src={option.image} alt={option.label} />
-              </>
-            )}
-            getOptionValue={(option) => option.value}
-            placeholder="Choose your learning language"
-          />
+                <select name="mainLanguage" id="" onChange={handleSelectChange} value={selectedOption}>
+                  {options.map((option)=>{
+                    return(
+                      <option key={option.value} value={option.value}>
+                        <img src={option.image} alt={option.value} />
+                        <label>{option.label}</label>
+                      </option>
+                    )
+                  })}
+                </select>
             </div>
             <div className="native">
                 <label>Native:</label>
-            <Select
-              className="select"
-            options={options2}
-            value={selectedOption2}
-            onChange={handleSelectChange2}
-            getOptionLabel={(option) => (
-              <>
-                <img src={option.image} alt={option.label} />
-              </>
-            )}
-            getOptionValue={(option) => option.value}
-            placeholder="Choose your native language"
-          /> 
+                <select name="mainLanguage" id="" onChange={handleSelectChange2} value={selectedOption2}>
+                  {options2.map((option)=>{
+                    return(
+                      <option key={option.value} value={option.value}>
+                        <img src={option.image} alt={option.value} />
+                        <label>{option.label}</label>
+                      </option>
+                    )
+                  })}
+                </select>
             </div>
+            <button>Submit</button>
          </div>
-         </>
+         </div>
         )
        } 
 

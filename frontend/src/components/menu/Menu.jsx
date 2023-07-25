@@ -1,5 +1,4 @@
-import React, {useContext, useState} from "react";
-import Select from "react-select";
+import React, {useContext, useEffect, useState} from "react";
 import Portugal from '../../assets/portugal.png'
 import English from '../../assets/united-kingdom.png'
 import France from '../../assets/france.png'
@@ -18,13 +17,20 @@ function Menu(){
     { value: "german", label: "German", image: German },
     { value: "french", label: "French", image: France }
   ];
+  
+ 
 
-  const [selectedOption, setSelectedOption] = useState(language == options[0].value ? options[0] : (language == options[1].value ? options[1] : (language == options[2].value ? options[2] : (language == options[3].value && options[3]))));
+  const [selectedOption, setSelectedOption] = useState(language);
+
+  useEffect(()=>{
+    setSelectedOption(language)
+  }, [language, selectedOption])
 
   const handleSelectChange = (selectedOption) => {
-    setSelectedOption(selectedOption);
-    change(selectedOption.value)
+    setSelectedOption(selectedOption.target.value)
+    change(selectedOption.target.value)
   };
+
   return(
     <main className="m">
       <div className="head">
@@ -34,23 +40,20 @@ function Menu(){
       </div>
       <div className="a"></div>
       <div className="language">
-              <Select  
-              className="select"
-            options={options}
-            value={selectedOption}
-            onChange={handleSelectChange}
-            getOptionLabel={(option) => (
-              <>
-                <img src={option.image} alt={option.label} />
-              </>
-            )}
-            getOptionValue={(option) => option.value}
-            placeholder="Choose your learning language"
-          />
+      <select name="mainLanguage" id="" onChange={handleSelectChange} value={selectedOption}>
+                  {options.map((option)=>{
+                    return(
+                      <option key={option.value} value={option.value}>
+                        <img src={option.image} alt={option.value} />
+                        <label>{option.label}</label>
+                      </option>
+                    )
+                  })}
+                </select>
       </div>
       <div className="profilePic">
         <Link to="/profile/:username">
-      <img src="https://lh3.googleusercontent.com/a/AAcHTte3Cx612zxY54ElrMSXajq4H9bpOIGnAnsif_DPsHbyHCM=s360-c-no " alt="" className="profile"/>
+      <img src="https://lh3.googleusercontent.com/a/AAcHTte3Cx612zxY54ElrMSXajq4H9bpOIGnAnsif_DPsHbyHCM=s360-c-no" alt="" className="profile"/>
         </Link>
       </div>
     </main>

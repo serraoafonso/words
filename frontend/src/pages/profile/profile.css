@@ -13,20 +13,20 @@ body{
     flex-direction: column;
 }
 
-.imagem{
+.imag{
     flex: 20%;
     margin-left: 5%;
     margin-top: 5%;
     display: flex;
     align-items: baseline
 }
-.imagem img{
+.imag img{
     border-radius: 50%;
     width: 20%;
     min-width: 130px;
     max-width: 300px
 }
-.imagem span{
+.imag span{
     background-color: lightgray;
     border-radius: 50%;
 }
@@ -58,4 +58,7 @@ body{
     font-size: 20px;
     color: grey;
     font-weight: bold;
+}
+.profile{
+    border-radius: 0;
 }

@@ -8,6 +8,8 @@ import { LanguageContext } from "../../context/languageContext";
 
 function Main(){
   const {language} = useContext(LanguageContext)
+
+  console.log(language)
   
     return(
     <div className="main">
