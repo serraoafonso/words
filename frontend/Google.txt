@@ -2,3 +2,11 @@ client id - 451868079952-0n9a0jnfiqioms8fm9sbhh9vcmus2djv.apps.googleusercontent
 
 cliente secret - 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
 
+
+
+
+
+
+
+
+//npm install vite@latest --save-dev

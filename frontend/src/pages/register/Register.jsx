@@ -5,12 +5,14 @@ import France from '../../assets/france.png'
 import German from '../../assets/germany.png'
 import Select from "react-select";
 import {Link, useNavigate} from 'react-router-dom'
+import jwt_decode from 'jwt-decode'
 import './register.css'
 
 export default function Register(){
   
   const navigate = useNavigate()
-
+  const [name, setName] = useState('')
+  const [gl,setGl] = useState(false)
 
   /*
   const [selectedOption, setSelectedOption] = useState("english");
@@ -44,13 +46,13 @@ export default function Register(){
     const [layout, setLayout] = useState(true)
     const [passou, setPassou] = useState(true)
 
-    function changeLayout(inputs){
-
+    async function changeLayout(inputs){
       const data = {
         email: inputs.email,
         username: inputs.username,
         password: inputs.password,
         name: inputs.name,
+        profilePic: ''
       }
     
       if(data.email=="" || data.username=="" || data.password=="" || data.username==""){
@@ -59,6 +61,25 @@ export default function Register(){
       localStorage.setItem('inputs', JSON.stringify(data))
       setLayout(false)
       }
+
+    if(layout && passou){//se o layout ja for false e se ja tiver passado
+    try{
+      const res = await fetch('http://localhost:4000/api/user/find', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: data.email})
+      })
+      console.log(res)
+      if(res.status==404){
+       return 
+      }else{
+        alert('User already registered')
+        setLayout(true)
+      }
+     }catch(err){
+      console.log(err)
+     }
+    }
     }
 
     const Layout1 = ()=>{
@@ -85,7 +106,7 @@ export default function Register(){
           client_id: "451868079952-0n9a0jnfiqioms8fm9sbhh9vcmus2djv.apps.googleusercontent.com",
           callback: handleCallbackResponse
         })
-  
+        
         google.accounts.id.renderButton(
           document.getElementById('sign'),
           {theme: "outline", size: "large"}
@@ -93,10 +114,31 @@ export default function Register(){
         //preciso por o comentario acima
       }, [layout])
 
-      function handleCallbackResponse(response){
-        console.log("Encoded JWT ID token: "+response.credential)
+      async function handleCallbackResponse(response){
+        setGl(true)
+        setLayout(false)
         var userObject = jwt_decode(response.credential)
         console.log(userObject)
+        const {name, email, picture} =userObject;
+        const a = Math.floor(Math.random()*10000000)
+        const username = `user-${a}`
+        const data = {name, email, username, profilePic: picture, password: ''}
+        console.log('OLA')
+        localStorage.setItem('inputs', JSON.stringify(data))
+       try{
+        const b = {email: email}
+        const data = await fetch('http://localhost:4000/api/user/find', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({email})
+        })
+        if(data){
+        navigate('/')
+        localStorage.removeItem('inputs')
+        }
+       }catch(err){
+        console.log(err)
+       }
        } 
        
        const estilo = !passou ? {
@@ -177,6 +219,7 @@ export default function Register(){
     };
      
     const handleSubmit = async(e)=>{
+      
       e.preventDefault()
       const inputs = JSON.parse(localStorage.getItem('inputs'))
       const userData = {
@@ -184,28 +227,34 @@ export default function Register(){
         mainLanguage: selectedOption,
         learningLanguage: selectedOption2
       }
+      console.log(userData)
       try{
-        await fetch('http://localhost:4000/api/user/register', {
+        const res = await fetch('http://localhost:4000/api/user/register', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(userData)
         })
+        if(res.status == 404){
+          alert('Username or email already taken')
+          setLayout(false)
+        }else{
+        localStorage.removeItem('inputs')
         alert('Login in successfull')
         navigate('/')
+        }
       }catch(err){
-        console.log(err)
-        alert('Um erro ocorreu: '+err)
+        alert('User already created')
         setLayout(false)
       }
     }
- 
+
         return(
             <> 
               <div className="header">
             <h1>Register</h1>
             </div>
             <form className="form2"><div className="header1">
-              <h3>Hello user!</h3>
+              <h3>Hello {JSON.parse(localStorage.getItem('inputs'))?.name}!</h3>
             </div>
               <div className="mae">
                 <label>Your native language:</label>
