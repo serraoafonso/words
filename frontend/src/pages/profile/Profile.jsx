@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from "react";
-import Select from "react-select";
 import Portugal from '../../assets/portugal.png'
 import English from '../../assets/united-kingdom.png'
 import France from '../../assets/france.png'
 import German from '../../assets/germany.png'
 import { LanguageContext } from "../../context/languageContext";
+import { UserContext } from "../../context/userContext";
 import './profile.css'
 
 export default function Profile(){
-
+    const {user} = useContext(UserContext)
     const {language, change} = useContext(LanguageContext)
 
     const options = [
@@ -24,7 +24,7 @@ export default function Profile(){
  
     const handleSelectChange = (selectedOption) => {
       setSelectedOption(selectedOption.target.value)
-      change(selectedOption.target.value)
+      change(selectedOption.target.value, user.id)
     };
   
     const options2 = [

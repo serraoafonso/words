@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import Portugal from '../../assets/portugal.png'
 import English from '../../assets/united-kingdom.png'
 import France from '../../assets/france.png'
@@ -6,7 +6,8 @@ import German from '../../assets/germany.png'
 import './main.css'
 import { LanguageContext } from "../../context/languageContext";
 
-function Main(){
+
+export default function Main(){
   const {language} = useContext(LanguageContext)
 
   console.log(language)
@@ -79,4 +80,3 @@ delete
   )
 }
 
-export default Main

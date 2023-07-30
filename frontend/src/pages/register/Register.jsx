@@ -3,7 +3,6 @@ import Portugal from '../../assets/portugal.png'
 import English from '../../assets/united-kingdom.png'
 import France from '../../assets/france.png'
 import German from '../../assets/germany.png'
-import Select from "react-select";
 import {Link, useNavigate} from 'react-router-dom'
 import jwt_decode from 'jwt-decode'
 import './register.css'
@@ -133,7 +132,8 @@ export default function Register(){
           body: JSON.stringify({email})
         })
         if(data){
-        navigate('/')
+          alert('Register succesfull, now login')
+        navigate('/login')
         localStorage.removeItem('inputs')
         }
        }catch(err){
@@ -239,8 +239,8 @@ export default function Register(){
           setLayout(false)
         }else{
         localStorage.removeItem('inputs')
-        alert('Login in successfull')
-        navigate('/')
+        alert('Register succesfull, now login')
+        navigate('/login')
         }
       }catch(err){
         alert('User already created')

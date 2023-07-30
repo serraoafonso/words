@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Menu from './components/menu/Menu'
 import Main from './pages/main/Main'
 import {Navigate, createBrowserRouter, RouterProvider, BrowserRouter, Outlet} from 'react-router-dom'
@@ -6,12 +6,14 @@ import Profile from './pages/profile/Profile'
 import Login from './pages/login/Login'
 import Register from './pages/register/Register'
 import './app.css'
+import { UserContext } from './context/userContext.jsx'
 
 
-let currentUser = true;
+
 
 const ProtectedRoute= ({children})=>{
-  if(!currentUser){
+  const {user} = useContext(UserContext)
+  if(!user || user==undefined || user==""){
     return <Navigate to="/login"/>
   }else{
   return children

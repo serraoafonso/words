@@ -31,7 +31,8 @@ async function login(primeiro, password) {
     } else {
       const { password, ...outros } = data[0];
       const token = jwt.sign({id: data[0].id}, process.env.ACCESS_TOKEN);
-      return token;
+      const dt = data[0][0]//data certa
+      return {token, dt}
     }
   } catch (err) {
     throw err;
@@ -44,4 +45,11 @@ async function findUser(email){
    return data[0]
 }
 
-module.exports = {register, login, findUser}
+
+async function changeSelect(learningLanguage, id){
+  const q = "UPDATE users SET learningLanguage = ? WHERE id=?";
+  const data = await db.execute(q, [learningLanguage, id])
+  return data
+}
+
+module.exports = {register, login, findUser, changeSelect}

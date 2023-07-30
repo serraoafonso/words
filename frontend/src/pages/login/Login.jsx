@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Books from '../../assets/book-stack.png'
 import {Link, useNavigate} from 'react-router-dom'
 import jwt_decode from 'jwt-decode'
 import './login.css'
+import { UserContext } from "../../context/userContext";
 
 
 export default function Login(){
+
+  const {verifyUser} = useContext(UserContext)
 
   const [inputs, setInputs] = useState({
     username: "",
@@ -32,8 +35,11 @@ export default function Login(){
         alert('User not registered')
         navigate('/register')
       }else{
+        const responseData = await data.json();
+        console.log(responseData)
+        verifyUser(responseData)
         alert('Success')
-      navigate('/')
+        navigate('/')
       }
      }catch(err){
       console.log(err)
@@ -69,10 +75,16 @@ export default function Login(){
       console.log(res)
       if(res.status==404){
         alert('Username or password wrong')
+        setInputs({
+          username:"",
+          password: ""
+        })
       }else{
+        const responseData = await res.json();
+        console.log(responseData)
+        verifyUser(responseData)
         alert('Success')
         navigate('/')
-
       }
     }catch(err){
       console.log(err)

@@ -6,19 +6,20 @@ import German from '../../assets/germany.png'
 import './menu.css'
 import { LanguageContext } from "../../context/languageContext";
 import {Link} from 'react-router-dom'
+import User from '../../assets/user.png'
+import { UserContext } from "../../context/userContext";
 
-function Menu(){
+export default function Menu(){
 
   const {language, change} = useContext(LanguageContext)
-
+  const {user} = useContext(UserContext)
   const options = [
     { value: "english", label: "English", image: English },
     { value: "portuguese", label: "Portuguese", image: Portugal },
     { value: "german", label: "German", image: German },
     { value: "french", label: "French", image: France }
   ];
-  
- 
+   
 
   const [selectedOption, setSelectedOption] = useState(language);
 
@@ -28,7 +29,7 @@ function Menu(){
 
   const handleSelectChange = (selectedOption) => {
     setSelectedOption(selectedOption.target.value)
-    change(selectedOption.target.value)
+    change(selectedOption.target.value, user.id)
   };
 
   return(
@@ -53,11 +54,11 @@ function Menu(){
       </div>
       <div className="profilePic">
         <Link to="/profile/:username">
-      <img src="https://lh3.googleusercontent.com/a/AAcHTte3Cx612zxY54ElrMSXajq4H9bpOIGnAnsif_DPsHbyHCM=s360-c-no" alt="" className="profile"/>
+      <img src={user.profilePic==undefined || user.profilePic
+      == "" ? User : user.profilePic } alt="" className="profile"/>
         </Link>
       </div>
     </main>
   )
 }
 
-export default Menu

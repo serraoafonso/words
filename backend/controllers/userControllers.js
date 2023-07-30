@@ -26,15 +26,18 @@ async function register(req, res){
     const primeiro = req.body.email//(req.body.email == null ? req.body.username : req.body.email);
     const password = req.body.password;
         let token;
+        let data;
          userModels.login(primeiro, password).then((t)=>{
-           token = t
+           token = t.token
+           data=t.dt
+           const {password, ...outros} = data
            if(token == null || token == undefined){
             return res.status(404).json('Login not valid')
         }
          res.cookie("accessToken", token, {
             httpOnly: true
-        }).status(200).json(token)  
-         }).catch((err)=>{
+        }).status(200).json(outros)  
+         }).catch((err)=>{//guarda o token nos cookies e retorna a data
           res.status(404).json(err.message)}
           )        
 }//verificar o porque de nao funcionar o login
@@ -53,5 +56,16 @@ async function findUser(req, res){
 }
 }
 
+async function changeSelect(req, res){
+  const learningLanguage = req.body.learningLanguage
+  const {id} = req.params
+  try{
+    await userModels.changeSelect(learningLanguage, id)
+    return res.status(200).json()
+  }catch(err){
+    return res.status(404).json(err)
+  }
+}
 
-module.exports = {register, login, findUser}
+
+module.exports = {register, login, findUser, changeSelect}
