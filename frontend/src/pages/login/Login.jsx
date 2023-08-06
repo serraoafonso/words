@@ -70,7 +70,7 @@ export default function Login(){
       const res = await fetch('http://localhost:4000/api/user/login', {
         method: 'post',
         headers: {'Content-type': 'application/json'},
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       })
       console.log(res)
       if(res.status==404){

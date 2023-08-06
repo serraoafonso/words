@@ -52,6 +52,7 @@ export default function Menu(){
                   })}
                 </select>
       </div>
+      <span>{user.name}</span>
       <div className="profilePic">
         <Link to="/profile/:username">
       <img src={user.profilePic==undefined || user.profilePic

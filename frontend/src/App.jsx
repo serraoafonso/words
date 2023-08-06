@@ -7,7 +7,7 @@ import Login from './pages/login/Login'
 import Register from './pages/register/Register'
 import './app.css'
 import { UserContext } from './context/userContext.jsx'
-
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 
 
@@ -20,8 +20,11 @@ const ProtectedRoute= ({children})=>{
   }
 }
 
+const queryClient = new QueryClient()
+
 const Layout =()=>{
   return (
+    <QueryClientProvider client={queryClient}>
     <main>
       <div className='menu'>
        <Menu/>
@@ -30,6 +33,7 @@ const Layout =()=>{
         <Outlet/>
         </div>
     </main>
+    </QueryClientProvider>    
   )
   }
 

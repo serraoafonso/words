@@ -15,6 +15,9 @@ table{
     margin: auto;
     margin-top: 8%;
     height: 23vh;
+    position: absolute;
+    left: 12.5%;
+    top: 15%
 }
 tr{
     text-align: center;

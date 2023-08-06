@@ -7,6 +7,23 @@ export const LanguageContextProvider = ({children})=>{
     const {user, verifyUser} = useContext(UserContext)
     const [language, setLanguage] = useState(user.learningLanguage)
 
+    const [mainLanguage, setMainLanguage] = useState(user.mainLanguage)
+
+    const modify = async(l)=>{
+    setMainLanguage(l)
+    try{
+      const res = await fetch (`http://localhost:4000/api/user/change/${id}`, {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({mainLanguage: l})
+      })    
+      console.log(res)    
+      verifyUser({...user, mainLanguage: l})
+    }catch(err){
+      console.log(err)
+    } 
+    } 
+
     const change = async(l, id)=>{
       setLanguage(l)   
       console.log(l, id)
@@ -23,7 +40,7 @@ export const LanguageContextProvider = ({children})=>{
       } 
     }
     return (
-        <LanguageContext.Provider value={{language, change}}>{children}</LanguageContext.Provider>
+        <LanguageContext.Provider value={{language, change, mainLanguage, modify}}>{children}</LanguageContext.Provider>
     )
 }
 

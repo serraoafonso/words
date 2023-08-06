@@ -46,10 +46,29 @@ async function findUser(email){
 }
 
 
-async function changeSelect(learningLanguage, id){
+async function changeLearning(learningLanguage, id){
   const q = "UPDATE users SET learningLanguage = ? WHERE id=?";
   const data = await db.execute(q, [learningLanguage, id])
   return data
 }
 
-module.exports = {register, login, findUser, changeSelect}
+async function changeMain(mainLanguage, id){
+  const q = "UPDATE users SET mainLanguage = ? WHERE id=?";
+  const data = await db.execute(q, [mainLanguage, id])
+  return data
+}
+
+
+async function changeAll(name, username, email, profilePic, id){
+  const q = "UPDATE users SET name =  ?, username = ?, email = ?, profilePic = ? WHERE id = ?"
+  const data = await db.execute(q, [name, username, email, profilePic, id])
+  return data
+}
+
+
+async function getUser(id){
+  const q = "SELECT * FROM users WHERE id = ?"
+  const [data] = await db.execute(q, [id])
+  return data[0]
+}
+module.exports = {register, login, findUser, changeLearning, changeMain, changeAll, getUser}

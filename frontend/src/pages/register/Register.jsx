@@ -125,7 +125,6 @@ export default function Register(){
         console.log('OLA')
         localStorage.setItem('inputs', JSON.stringify(data))
        try{
-        const b = {email: email}
         const data = await fetch('http://localhost:4000/api/user/find', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},

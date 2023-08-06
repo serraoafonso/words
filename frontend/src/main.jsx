@@ -8,8 +8,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <UserContextProvider>
       <LanguageContextProvider>
-        <App />
+            <App/>
       </LanguageContextProvider>
     </UserContextProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+  )

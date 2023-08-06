@@ -58,14 +58,44 @@ async function findUser(req, res){
 
 async function changeSelect(req, res){
   const learningLanguage = req.body.learningLanguage
+  const mainLanguage = req.body.mainLanguage
+  const {id} = req.params
+
+  if(learningLanguage=="" || learningLanguage == null){
+    try{
+      await userModels.changeMain(mainLanguage, id)
+      return res.status(200).json()
+    }catch(err){
+      return res.status(404).json(err)
+    }
+  }else{
+    try{
+      await userModels.changeLearning(learningLanguage, id)
+      return res.status(200).json()
+    }catch(err){
+      return res.status(404).json(err)
+    }
+  }
+}
+
+async function changeAll(req, res){
+  const {name, username, email, profilePic} = req.body;
   const {id} = req.params
   try{
-    await userModels.changeSelect(learningLanguage, id)
+    await userModels.changeAll(name, username, email, profilePic, id)
     return res.status(200).json()
   }catch(err){
     return res.status(404).json(err)
   }
 }
 
-
-module.exports = {register, login, findUser, changeSelect}
+async function getUser(req, res){
+  const {id} = req.params;
+  try{
+    const data = await userModels.getUser(id)
+    return res.status(200).json(data)
+  }catch(err){
+    return res.status(404).json(err)
+  }
+}
+module.exports = {register, login, findUser, changeSelect, changeAll, getUser}

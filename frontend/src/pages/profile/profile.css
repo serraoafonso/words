@@ -5,37 +5,39 @@
 }
 
 body{
-    overflow: scroll;
+    min-height: 100vh;
 }
 
 .profile{
     display: flex;
+    min-height: 100vh;
     flex-direction: column;
+    overflow-y: scroll;
 }
 
 .imag{
-    flex: 20%;
+    flex: 10%;
     margin-left: 5%;
     margin-top: 5%;
     display: flex;
-    align-items: baseline
+    align-items:baseline;
+    max-height: 24vh;
 }
 .imag img{
     border-radius: 50%;
-    width: 20%;
-    min-width: 130px;
-    max-width: 300px
+    width: 20vh;
 }
 .imag span{
     background-color: lightgray;
     border-radius: 50%;
+    position: relative;
 }
 .data{
-    flex: 80%;
+    flex: 90%;
     width: 70%;
     margin:auto;
-    margin-top: 5%;
     max-width: 800px;
+    margin-top: 20px;
 }
 
 .i{
@@ -62,3 +64,15 @@ body{
 .profile{
     border-radius: 0;
 }
+
+span{
+}
+
+.file button{
+
+}/*
+@media only screen and (max-width: 1000px){
+    .data{
+        margin-top: -20%;
+    }
+}*/

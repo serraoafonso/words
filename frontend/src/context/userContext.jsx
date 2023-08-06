@@ -7,7 +7,6 @@ export const UserContextProvider = ({children})=>{
   console.log(storedUser == undefined || storedUser == null)*/
   const storedUser = localStorage.getItem('user');
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
-
     const verifyUser = (l)=>{
          setUser(l)
     }
@@ -15,8 +14,6 @@ export const UserContextProvider = ({children})=>{
       localStorage.setItem('user', JSON.stringify(user));
     }, [user]);
     
-
-
     return (
         <UserContext.Provider value={{user, verifyUser}}>{children}</UserContext.Provider>
     )
