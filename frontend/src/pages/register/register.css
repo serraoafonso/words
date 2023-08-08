@@ -16,7 +16,7 @@ body{
 *:focus{
     outline: none;
 }
-form{
+.form1{
   width: 50%;
   background-color: white;
   margin-top: 10%;

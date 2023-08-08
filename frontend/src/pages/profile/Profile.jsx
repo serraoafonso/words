@@ -10,6 +10,7 @@ import './profile.css'
 import {useNavigate} from 'react-router-dom'
    
       export default function Profile(){
+  const [words, setWords] = useState(0)      
   const {user, verifyUser} = useContext(UserContext)
   const {language, change, mainLanguage, modify} = useContext(LanguageContext)
   const [link, setLink] = useState('')
@@ -42,7 +43,24 @@ import {useNavigate} from 'react-router-dom'
     }
   }
   
-    
+  useEffect(() => {
+    getWords();
+  }, []);//usar sempre uma funcao que chama outra funcao, nunca diretamente
+  
+
+   async function getWords(){
+    try{
+      const data = await fetch(`http://localhost:4000/api/user/words/${user.id}`, {
+        credentials: 'include'
+      })
+      const numero = await data.json()
+      setWords(numero)
+      console.log(numero)//nao esquecer os parenteses
+    }catch(err){
+      console.log(err)
+    }
+   } 
+   
     async function handleClick(e){
       e.preventDefault();
     let imgUrl = '';
@@ -70,7 +88,8 @@ import {useNavigate} from 'react-router-dom'
         const res = await fetch(`http://localhost:4000/api/user/changeAll/${user.id}`, {
           method: 'post',
           headers: {'Content-type': 'application/json'},
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
+          credentials:'include'
         })
         console.log((res))
         if(res.status==404){
@@ -78,7 +97,11 @@ import {useNavigate} from 'react-router-dom'
           alert('Username or email already taken')
           /*const rightData = await fetch('http://localhost:4000/api/user/user/'+user.id)
           verifyUser(rightData)*/
-        }else{
+        }else if(res.status==401){
+          alert('Session expired'),
+          navigate('/login')
+        }
+        else{
           verifyUser({...data, id: user.id, createdAt: user.createdAt, learningLanguage: language, mainLanguage})
           alert('Changes saved')
           navigate('/')
@@ -148,7 +171,7 @@ import {useNavigate} from 'react-router-dom'
             <input type="file" id = "file"onChange={e=>handleFile(e)} name="file"/>
             </span>        
             <div className="words">
-              Words learned: 2000    
+              Words learned: {words}  
             </div>   
          </div>
          <div className="data">

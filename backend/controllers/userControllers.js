@@ -23,7 +23,7 @@ async function register(req, res){
 }
 
     function login(req, res){
-    const primeiro = req.body.email//(req.body.email == null ? req.body.username : req.body.email);
+    const primeiro = req.body.email;
     const password = req.body.password;
         let token;
         let data;
@@ -40,7 +40,7 @@ async function register(req, res){
          }).catch((err)=>{//guarda o token nos cookies e retorna a data
           res.status(404).json(err.message)}
           )        
-}//verificar o porque de nao funcionar o login
+}
 
 async function findUser(req, res){
   const {email} = req.body
@@ -57,6 +57,13 @@ async function findUser(req, res){
 }
 
 async function changeSelect(req, res){
+  const token = req.cookies.accessToken
+  if(!token) return res.status(401).json('Erro')
+  try{
+  jwt.verify(token, process.env.ACCESS_TOKEN)
+}catch(err){
+  return res.status(401).json(err)
+}
   const learningLanguage = req.body.learningLanguage
   const mainLanguage = req.body.mainLanguage
   const {id} = req.params
@@ -79,6 +86,13 @@ async function changeSelect(req, res){
 }
 
 async function changeAll(req, res){
+  const token = req.cookies.accessToken
+  if(!token) return res.status(401).json('Erro')
+  try{
+  jwt.verify(token, process.env.ACCESS_TOKEN)
+}catch(err){
+  return res.status(401).json(err)
+}
   const {name, username, email, profilePic} = req.body;
   const {id} = req.params
   try{
@@ -98,4 +112,22 @@ async function getUser(req, res){
     return res.status(404).json(err)
   }
 }
-module.exports = {register, login, findUser, changeSelect, changeAll, getUser}
+
+async function getWords(req, res){
+  const token = req.cookies.accessToken
+  if(!token) return res.status(401).json('Erro')
+  try{
+  jwt.verify(token, process.env.ACCESS_TOKEN)
+}catch(err){
+  return res.status(401).json(err)
+}
+  const {id} = req.params
+  try{
+    const data = await userModels.getWords(id)
+    let numero = data.length
+    return res.status(200).json(numero)
+  }catch(err){
+    return res.status(404).json(err)
+  }
+}
+module.exports = {register, login, findUser, changeSelect, changeAll, getUser, getWords}

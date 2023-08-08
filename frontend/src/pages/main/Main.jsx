@@ -7,9 +7,11 @@ import './main.css'
 import { LanguageContext } from "../../context/languageContext";
 import { UserContext } from "../../context/userContext";
 import {QueryClient, useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import { useNavigate } from "react-router-dom"
 
 
 export default function Main(){
+  const navigate = useNavigate()
   const {language, mainLanguage} = useContext(LanguageContext)
   const {user} = useContext(UserContext)
   const [rightData, setRightData] = useState([])
@@ -52,11 +54,20 @@ export default function Main(){
         const res = await fetch(`http://localhost:4000/api/words/post/${user.id}`, {
           method: 'post',
           headers: {'Content-type': 'application/json'},
-          body: JSON.stringify(d)
+          body: JSON.stringify(d),
+          credentials: 'include'
         })
         console.log(res)
-        if(!res.ok){
+        if (response.status == 401) {
+          alert('Session expired')
+          navigate('/login')
+        }
+        else if(!res.ok){
           throw new Error('An error has ocured')
+        }
+        if(res.status == 401){
+          alert('Session expired')
+          na
         }
       }catch(err){
         console.log(err)
@@ -78,8 +89,13 @@ export default function Main(){
       try{
       const res = await fetch(`http://localhost:4000/api/words/${id}`, {
         method: 'delete',
+        credentials: 'include'
       })
       console.log(res)
+      if (response.status == 401) {
+        alert('Session expired')
+        navigate('/login')
+      }
     }catch(err){
       console.log(err)
     }
@@ -89,29 +105,64 @@ export default function Main(){
     }
   })
 
-  const getData = async()=>{
-    try{
+  const editWord = useMutation({
+    mutationFn: async(body)=>{
+      console.log(body)
+      try{
+        const res = await fetch(`http://localhost:4000/api/words/${body.id}`, {
+          method: 'put',
+          headers: {'Content-type': 'application/json'},
+          body: JSON.stringify(body.inputs),
+          credentials: 'include'
+        })
+        if (response.status == 401) {
+          alert('Session expired')
+          navigate('/login')
+        }else if(!res.ok){
+          throw new Error()
+        }
+        console.log(res)
+      }catch(err){
+        console.log(err)
+      }
+    },
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({queryKey: ['words']})
+    }
+  })
+
+  useEffect(()=>{
+    console.log(editInputs)
+  }, [editInputs])
+
+  const getData = async () => {
+    try {
       const response = await fetch(`http://localhost:4000/api/words/get/${user.id}`, {
         method: 'post',
-        headers: {'Content-type': 'application/json'},
-        body: JSON.stringify({mainLanguage})
-      })     
-     if(!response.ok){
-       throw new Error('Network error')
-     }
-     const jsonData = await response.json();
-     return jsonData;
- 
-   }catch(err){
-     console.log(err)
-   }
-  }
-
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({ mainLanguage }),
+        credentials: 'include'
+      });
+      console.log(response)
+      if (response.status == 401) {
+        alert('Session expired')
+        navigate('/login')
+      }else if (!response.ok) {
+        throw new Error('Network error');
+      }
+      const jsonData = await response.json();
+      return jsonData;
+    } catch (err) {
+      console.log(err);
+      throw err; 
+    }
+  };
+  
 
 
   const {isLoading, error, data} = useQuery({
     queryKey: ['words'],
-    queryFn: getData
+    queryFn: getData,
       /*
       fetch(`http://localhost:4000/api/words/${user.id}`, {
       body: JSON.stringify(p)}).then((res)=>res.json())*/
@@ -152,53 +203,92 @@ export default function Main(){
     setEditInputs(prev=>({...prev, [e.target.name]: e.target.value}))
   }
 
-
-  function words() {
-    if(error){
-      return 'Erro'
-    }else if(isLoading){
-      return 'Loading...'
-    }else{
-      return (
-        
-       rightData?.map((word) => {
-          if(edit &&  idEditado == word.id){
-           return(
-            <tr>
-            <td><input type="text" className="input" name="word" value={editInputs.word} onChange={change}/></td>
-            <td><input type="text" className="input" name="translation" value={editInputs.translation} onChange={change}/></td>
-            <td>19/7/2023</td>
-            <td>
-            <span class="material-symbols-outlined">
-            edit
-            </span> 
-            <span class="material-symbols-outlined">
-            delete
-            </span>
-            </td>
-          </tr>
-           )
-          }else{
-            return(
-          <tr key={word.id} id={word.id}>
-            <td>{word.word}</td>
-            <td>{word.translation}</td>
-            <td>19/7/2023</td>
-            <td>
-              <span className="material-symbols-outlined" id={word.id} onClick={(e)=>prepareEdit(e, word)}>edit</span>
-              <span className="material-symbols-outlined" id={word.id} onClick={(e)=>deleteMutation(e)}>delete</span>
-            </td>
-          </tr>
-            )
-       }
-      }
-        )
-      )
-    }
+  async function submitEdit(e) {
+    e.preventDefault();
+    console.log(editInputs, "input");
+    editWord.mutate({ id: idEditado, inputs: editInputs });
+    // You can reset the idEditado here if needed
+    setEdit(false);
   }
 
-
+  function words() {
+    if (error) {
+      return "Erro";
+    } else if (isLoading) {
+      return "Loading...";
+    } else {
+      return (
+        rightData?.map((word) => (
+          <tr key={word.id} id={word.id}>
+            <td>
+              {edit && idEditado === word.id ? (
+                <input
+                  type="text"
+                  key={word.id}
+                  className="input"
+                  name="word"
+                  value={editInputs.word}
+                  onChange={change}
+                />
+              ) : (
+                word.word
+              )}
+            </td>
+            <td>
+              {edit && idEditado == word.id ? (
+                <input
+                  type="text"
+                  className="input"
+                  key={word.id}
+                  name="translation"
+                  value={editInputs.translation}
+                  onChange={change}
+                />
+              ) : (
+                word.translation
+              )}
+            </td>
+            <td>19/7/2023</td>
+            <td>
+              {edit && idEditado == word.id ? (
+                <button onClick={submitEdit}>Save</button>
+              ) : (
+                <>
+                  <span
+                    className="material-symbols-outlined"
+                    onClick={(e) => prepareEdit(e, word)} id={word.id}
+                  >
+                    edit
+                  </span>
+                  <span
+                    className="material-symbols-outlined"
+                    onClick={(e) => deleteMutation(e)} id={word.id}
+                  >
+                    delete
+                  </span>
+                </>
+              )}
+            </td>
+          </tr>
+        ))
+      );
+    }
+  }
+/*
+  useEffect(()=>{
+  let wordInput = document.getElementById('wordInput');
+  let translationInput = document.getElementById('translationInput')
+  wordInput?.addEventListener('keydown', handleClick)
+  translationInput?.addEventListener('keydown', handleClick)
+  }, [edit])*/
   
+
+  function handleClick(e){
+    if(e.key == "Enter"){
+    e.preventDefault();
+    submitEdit(e)  
+    }
+  }
 
     return(
     <div className="main">

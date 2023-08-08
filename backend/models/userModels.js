@@ -30,7 +30,7 @@ async function login(primeiro, password) {
       throw new Error("Wrong password");
     } else {
       const { password, ...outros } = data[0];
-      const token = jwt.sign({id: data[0].id}, process.env.ACCESS_TOKEN);
+      const token = jwt.sign({id: data[0].id}, process.env.ACCESS_TOKEN, {expiresIn: '30m'});
       const dt = data[0][0]//data certa
       return {token, dt}
     }
@@ -71,4 +71,11 @@ async function getUser(id){
   const [data] = await db.execute(q, [id])
   return data[0]
 }
-module.exports = {register, login, findUser, changeLearning, changeMain, changeAll, getUser}
+
+async function getWords(id){
+  const q = "SELECT * FROM words WHERE idUser = ?";
+  const data = await db.execute(q, [id])
+  return data[0]
+}
+
+module.exports = {register, login, findUser, changeLearning, changeMain, changeAll, getUser, getWords}

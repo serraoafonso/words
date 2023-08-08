@@ -71,6 +71,7 @@ export default function Login(){
         method: 'post',
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify(data),
+        credentials: 'include'
       })
       console.log(res)
       if(res.status==404){

@@ -151,8 +151,7 @@ export default function Register(){
               <div className="header">
             <h1>Register</h1>
             </div>
-            <form>
-
+            <form className="form1">
             <div className="name">
               <label>Name:</label>
               <input name="name" type="text" onChange={handleChange} value={inputs.name}/>
@@ -231,7 +230,8 @@ export default function Register(){
         const res = await fetch('http://localhost:4000/api/user/register', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(userData)
+          body: JSON.stringify(userData),
+          credentials: 'include'
         })
         if(res.status == 404){
           alert('Username or email already taken')

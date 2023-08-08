@@ -7,10 +7,16 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const multer = require('multer')
 
-app.use(cors({
-    origin: 'http://localhost:5173'
-}))
-app.use(cors())
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true // Allow cookies and other credentials to be sent
+};
+
+app.use((req, res, next)=>{
+    res.header("Access-Control-Allow-Credentials", true)//preciso fazer isto e na request dar o credentials include
+    next()
+})
+app.use(cors(corsOptions));
 app.use(express.json())
 app.use(cookieParser())//preciso fazer isto para conseguir buscar os cookies com req.cookie
 
